@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
+    "jade": "^1.11.0",
     "style-loader": "^0.20.2",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
