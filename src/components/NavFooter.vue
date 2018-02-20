@@ -4,8 +4,8 @@
       <div class="footer__secondary">
         <div class="footer__inner">
           <div class="footer__region">
-            <span>Region</span>
-            <select class="footer__region__select">
+            <span style="font-size: 16px">Region</span>
+            <select>
               <option value="en-US">USA</option>
               <option value="zh-CN">China</option>
             </select>

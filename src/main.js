@@ -5,9 +5,14 @@ import App from './App';
 import router from './router';
 import _VueResource from 'vue-resource';
 import axios from 'axios';
+import VueLazyLoad from 'vue-lazyload';
 
 Vue.config.productionTip = false;
 Vue.use(_VueResource);
+Vue.use(VueLazyLoad, {
+  loading: './static/loading-svg/loading-bars.svg'
+
+});
 Vue.prototype.$axios = axios;
 
 /* eslint-disable no-new */

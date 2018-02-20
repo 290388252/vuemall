@@ -25,7 +25,7 @@
         <a href="/">
           <img class="navbar-brand-logo" src="../assets/logo.png">
         </a>
-        <span>My Shop</span>
+        <span style="font-weight: 900; color: #d1434a">My Shop</span>
       </div>
       <div class="navbar-right-container" style="display: flex;">
         <div class="navbar-menu-container">
@@ -37,7 +37,7 @@
             <span class="navbar-cart-count" v-if="cartCount"></span>
             <a class="navbar-link navbar-cart-link" href="/#/cart">
               <svg class="navbar-cart-logo">
-                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
+                <use class="usea" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
               </svg>
             </a>
           </div>
@@ -125,6 +125,9 @@
   }
   .navbar-link {
     padding-left: 15px;
+  }
+  .navbar-link:hover {
+    color: #d1434a;
   }
   .navbar-cart-container {
     position: relative;
