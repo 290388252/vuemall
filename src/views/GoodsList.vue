@@ -50,9 +50,6 @@
     </div>
 </template>
 
-<style lang="stylus" rel="stylesheet/stylus">
-</style>
-
 <script type="text/ecmascript-6">
   import NavHeader from './../components/NavHeader';
   import NavFooter from './../components/NavFooter';
@@ -65,7 +62,18 @@
       NavFooter,
       NavBread
     },
+    mounted() {
+      this.getGoodsList();
+    },
     methods: {
+      getGoodsList() {
+        this.$axios.get('api/goods').then((res) => {
+          if (res.data.errno === 0) {
+            let goodsLists = res.data.data.result;
+            console.log(goodsLists);
+          }
+        });
+      },
       sortFlag() {
         console.log('TODOsortFlag');
       },
