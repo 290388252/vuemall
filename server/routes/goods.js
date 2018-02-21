@@ -26,16 +26,16 @@ router.get('/', (req, res, next) => {
 
   let params = {};
   let goodsModel = Goods.find(params).skip(skip).limit(pageSize);
-  goodsModel.sort(sort);
+  goodsModel.sort({'salePrice': sort});
   goodsModel.exec((err, doc) => {
     if (err) {
       res.json({
-        status: '1',
+        status: 1,
         msg: err.message
       });
     } else {
       res.json({
-        status: '0',
+        status: 0,
         msg: '',
         result: {
           count: doc.length,

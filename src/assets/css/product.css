@@ -429,6 +429,12 @@
   transform: rotate(180deg);
 }
 
+.sort-down {
+  -webkit-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  transform: rotate(0deg);
+}
+
 .filter-nav .filterby {
   display: none;
   letter-spacing: .25em;

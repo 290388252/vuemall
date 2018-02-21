@@ -9,7 +9,7 @@
           <div class="filter-nav">
             <span class="sortby">Sort by:</span>
             <a href="javascript:void(0)" class="default cur">Default</a>
-            <a href="javascript:void(0)" class="price" v-bind:class="{'sort-up':sortFlag}" @click="sortGoods()">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
+            <a href="javascript:void(0)" class="price" v-bind:class="{'sort-up':!filterSort}" @click="sortGoods">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
             <a href="javascript:void(0)" class="filterby stopPop" @click.stop="showFilterPop">Filter by</a>
           </div>
           <div class="accessory-result">
@@ -27,11 +27,11 @@
                 <ul>
                   <li v-for="item in goodsLists">
                     <div class="pic">
-                      <a href="#"><img v-lazy="'../../static/'+ item.prodcutImg" alt=""></a>
+                      <a href="#"><img v-lazy="'../../static/'+ item.productImage" alt=""></a>
                     </div>
                     <div class="main">
                       <div class="name">{{item.productName}}</div>
-                      <div class="price">{{item.prodcutPrice + '￥'}}</div>
+                      <div class="price">{{item.salePrice + '￥'}}</div>
                       <div class="btn-area">
                         <a href="javascript:;" class="btn btn--m">加入购物车</a>
                       </div>
@@ -84,7 +84,10 @@
         ],
         priceChecked: 'all',
         filterBy: false,
-        overLayFlag: false
+        overLayFlag: false,
+        filterSort: true,
+        page: 1,
+        pageSize: 8
       };
     },
     components: {
@@ -97,21 +100,31 @@
     },
     methods: {
       getGoodsList() {
-        let date = new Date();
-        let timer = date.getTime().toString();
-        this.$axios.get('api/goods?time=' + timer).then((res) => {
-          if (res.data.errno === 0) {
-            this.goodsLists = res.data.data.result;
-            console.log(this.goodsLists);
+        var param = {
+          page: this.page,
+          pageSize: this.pageSize,
+          sort: this.filterSort ? 1 : -1
+        };
+//        let date = new Date();
+//        let timer = date.getTime().toString();
+        this.$axios.get('/goods', {
+          params: param
+        }).then((res) => {
+          // console.log(res);
+          if (res.data.status === 0) {
+            this.goodsLists = res.data.result.list;
+            // console.log(this.goodsLists);
           }
         });
-      },
-      sortFlag() {
-        console.log('TODOsortFlag');
       },
       showFilterPop() {
         this.filterBy = true;
         this.overLayFlag = true;
+      },
+      sortGoods() {
+        this.filterSort = !this.filterSort;
+        this.getGoodsList();
+        this.page = 1;
       },
       closePop() {
         this.filterBy = false;
