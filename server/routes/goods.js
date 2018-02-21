@@ -60,4 +60,20 @@ router.get('/', (req, res, next) => {
     }
   });
 });
+
+router.post('/addCart', (req, res, next) => {
+      let userId = '100000077';
+      let productId = req.body.productId;
+      let User = require('../models/user');
+      User.findOne({userId: userId}, (err, userDoc) => {
+        if (err) {
+          res.json({
+            status: 1,
+            msg: err.message
+          });
+        } else {
+          console.log('userDoc:' + userDoc);
+        }
+      });
+});
 module.exports = router;
