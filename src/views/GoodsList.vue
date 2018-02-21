@@ -39,12 +39,12 @@
                   </li>
                 </ul>
               </div>
-              <!--<div class="view-more-normal"-->
-                   <!--v-infinite-scroll="loadMore"-->
-                   <!--infinite-scroll-disabled="busy"-->
-                   <!--infinite-scroll-distance="20">-->
-                <!--<img src="./../assets/loading-spinning-bubbles.svg" v-show="loading">-->
-              <!--</div>-->
+              <div class="view-more-normal"
+                   v-infinite-scroll="loadMore"
+                   infinite-scroll-disabled="busy"
+                   infinite-scroll-distance="30">
+                <img src="./../assets/loading-spinning-bubbles.svg" v-show="loading">
+              </div>
             </div>
           </div>
         </div>
@@ -58,7 +58,6 @@
   import NavHeader from './../components/NavHeader';
   import NavFooter from './../components/NavFooter';
   import NavBread from './../components/NavBread';
-  import '../assets/css/base.css';
   import '../assets/css/product.css';
   export default {
     data() {
@@ -82,10 +81,12 @@
             endPrice: '5000.00'
           }
         ],
+        busy: true,
         priceChecked: 'all',
         filterBy: false,
         overLayFlag: false,
         filterSort: true,
+        loading: false,
         page: 1,
         pageSize: 8
       };
@@ -99,21 +100,34 @@
       this.getGoodsList();
     },
     methods: {
-      getGoodsList() {
+      getGoodsList(flag) {
         var param = {
           page: this.page,
           pageSize: this.pageSize,
-          sort: this.filterSort ? 1 : -1
+          sort: this.filterSort ? 1 : -1,
+          priceLevel: this.priceChecked
         };
-//        let date = new Date();
-//        let timer = date.getTime().toString();
+        this.loading = true;
         this.$axios.get('/goods', {
           params: param
         }).then((res) => {
           // console.log(res);
+          this.loading = false;
           if (res.data.status === 0) {
-            this.goodsLists = res.data.result.list;
+            if (flag) {
+              this.goodsLists = this.goodsLists.concat(res.data.result.list);
+              if (res.data.result.count === 0) {
+                  this.busy = true;
+              } else {
+                this.busy = false;
+              }
+            } else {
+              this.goodsLists = res.data.result.list;
+              this.busy = false;
+            }
             // console.log(this.goodsLists);
+          } else {
+            console.log('请求失败了！');
           }
         });
       },
@@ -132,13 +146,16 @@
       },
       setPriceFilter(index) {
         this.priceChecked = index;
+        console.log(index + '-' + this.priceChecked);
+        this.page = 1;
+        this.getGoodsList();
         this.closePop();
       },
       loadMore() {
-        console.log('TODOloadMore');
-      },
-      loading() {
-        console.log('TODOloading');
+        setTimeout(() => {
+          this.page++;
+          this.getGoodsList(true);
+        }, 500);
       }
     }
   };

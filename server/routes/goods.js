@@ -22,9 +22,24 @@ router.get('/', (req, res, next) => {
   let pageSize = parseInt(req.param('pageSize'));
   // let priceLevel = req.param('priceLevel');
   let sort = req.param('sort');
+  let priceLevel = req.param('priceLevel');
+  let priceGt = '';
+  let priceLte = '';
   let skip = (page - 1) * pageSize;
-
   let params = {};
+    switch (priceLevel) {
+      case '0': priceGt = 0; priceLte = 100; break;
+      case '1': priceGt = 100; priceLte = 500; break;
+      case '2': priceGt = 500; priceLte = 1000; break;
+      case '3': priceGt = 1000; priceLte = 5000; break;
+      case 'all': priceGt = 0; priceLte = 5000; break;
+    }
+  params = {
+    salePrice: {
+      $gt: priceGt,
+      $lte: priceLte
+    }
+  };
   let goodsModel = Goods.find(params).skip(skip).limit(pageSize);
   goodsModel.sort({'salePrice': sort});
   goodsModel.exec((err, doc) => {
