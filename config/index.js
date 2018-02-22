@@ -20,6 +20,12 @@ module.exports = {
         //   '^/goods': ''
         // }
       },
+      '/goods/*': {
+        target: 'http://localhost:5000'
+      },
+      '/users/*': {
+        target: 'http://localhost:5000'
+      },
     },
 
     // Various Dev Server settings

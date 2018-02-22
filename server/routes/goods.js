@@ -78,7 +78,7 @@ router.post('/addCart', (req, res, next) => {
             userDoc.cartList.forEach((item) => {
               if (item.productId === productId) {
                 goodItem = item;
-                item.productNum ++;
+                item.productNum++;
               }
             });
             if (goodItem) {
@@ -97,7 +97,7 @@ router.post('/addCart', (req, res, next) => {
                 }
               });
             } else {
-              Goods.findOne({productId: productId},(errGoods, goodsDoc) => {
+              Goods.findOne({productId: productId}, (errGoods, goodsDoc) => {
               if (errGoods) {
                 res.json({
                   status: 1,
