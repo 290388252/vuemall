@@ -74,7 +74,30 @@ router.post('/addCart', (req, res, next) => {
         } else {
           console.log('userDoc:' + userDoc);
           if (userDoc) {
-            Goods.findOne({productId: productId},(errGoods, goodsDoc) => {
+            let goodItem = '';
+            userDoc.cartList.forEach((item) => {
+              if (item.productId === productId) {
+                goodItem = item;
+                item.productNum ++;
+              }
+            });
+            if (goodItem) {
+              userDoc.save((err, saveDoc) => {
+                if (err) {
+                  res.json({
+                    status: 1,
+                    msg: err.message
+                  });
+                } else {
+                  res.json({
+                    status: 0,
+                    msg: '',
+                    result: 'success'
+                  });
+                }
+              });
+            } else {
+              Goods.findOne({productId: productId},(errGoods, goodsDoc) => {
               if (errGoods) {
                 res.json({
                   status: 1,
@@ -84,8 +107,8 @@ router.post('/addCart', (req, res, next) => {
                 if (goodsDoc) {
                  goodsDoc.productNum = 1;
                  goodsDoc.checked = 1;
-                 User.cartList.push(goodsDoc);
-                 User.save((err, saveDoc) => {
+                 userDoc.cartList.push(goodsDoc);
+                 userDoc.save((err, saveDoc) => {
                    if (err) {
                      res.json({
                        status: 1,
@@ -102,6 +125,7 @@ router.post('/addCart', (req, res, next) => {
                 }
               }
             });
+            }
           }
         }
       });
