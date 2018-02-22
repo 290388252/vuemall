@@ -73,6 +73,36 @@ router.post('/addCart', (req, res, next) => {
           });
         } else {
           console.log('userDoc:' + userDoc);
+          if (userDoc) {
+            Goods.findOne({productId: productId},(errGoods, goodsDoc) => {
+              if (errGoods) {
+                res.json({
+                  status: 1,
+                  msg: errGoods.message
+                });
+              } else {
+                if (goodsDoc) {
+                 goodsDoc.productNum = 1;
+                 goodsDoc.checked = 1;
+                 User.cartList.push(goodsDoc);
+                 User.save((err, saveDoc) => {
+                   if (err) {
+                     res.json({
+                       status: 1,
+                       msg: err.message
+                     });
+                   } else {
+                     res.json({
+                       status: 0,
+                       msg: '',
+                       result: 'success'
+                     });
+                   }
+                 });
+                }
+              }
+            });
+          }
         }
       });
 });
