@@ -167,7 +167,12 @@
     },
     methods: {
       logOut() {
-        console.log('TODOlogOut');
+        this.$axios.post('/users/logout').then((res) => {
+          if (res.data.status === 0) {
+            this.nickName = '';
+            console.log('logout success');
+          }
+        });
       },
       cartCount () {
         console.log('TODOcartCount');

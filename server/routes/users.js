@@ -44,4 +44,16 @@ router.post('/login', (req, res, next) => {
     }
   });
 });
+
+router.post('/logout', (req, res, next) => {
+  res.cookie('userId', '', {
+    path: '/',
+    maxAge: -1
+  });
+  res.json({
+    status: 0,
+    msg: '',
+    result: '退出成功'
+  });
+});
 module.exports = router;
