@@ -58,11 +58,14 @@
           <a href="javascript:;" class="btn-login" @click="closeModalAndOpenLogin">Go To Login</a>
         </div>
       </Modal>
-      <Modal v-show="loginSuccess" :modalShow="loginSuccess">
-        <p slot="message">
-          很高興被您加入購物車
+      <Modal v-show="loginSuccess" :modalShow="loginSuccess" v-on:close="closeModal">
+        <p slot="message" style="font-size: 18px">
+          <svg class="icon-status-ok">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-status-ok"></use>
+          </svg>
+         很高興被您加入購物車
         </p>
-        <div slot="btnGroup">
+        <div style="display: inline-block" slot="btnGroup">
             <a href="javascript:;" class="btn-login-double" @click="closeModal">繼續購物</a>
             <a href="javascript:;" class="btn-login-double" @click="closeModal">查看我的購物車</a>
         </div>

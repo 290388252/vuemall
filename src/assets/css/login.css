@@ -60,14 +60,15 @@
   text-align: center;
 }
 .btn-login-double{
-  width: 50%;
-  height: 38px;
-  line-height: 38px;
+  display: inline-block;
+  width: 44%;
+  line-height: 28px;
   border: 2px solid #d1434a;
   color: #d1434a;
   font-size: 14px;
   text-align: center;
-  margin-right: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
   padding: 5px;
 }
 .btn-login-double:hover {
