@@ -158,22 +158,42 @@
   export default {
     data() {
       return {
-        userName: 'admin',
-        userPwd: '123456',
+        userName: '',
+        userPwd: '',
         errorTip: false,
-        nickName: 'yanchao',
+        nickName: '',
         loginModalFlag: false
       };
     },
     methods: {
       logOut() {
-        console.log('TODOlogOut');
+        this.$axios.post('/users/logout').then((res) => {
+          if (res.data.status === 0) {
+            this.nickName = '';
+            console.log('logout success');
+          }
+        });
       },
       cartCount () {
         console.log('TODOcartCount');
       },
       login () {
-        console.log('TODOlogin');
+        if (!this.userName || !this.userPwd) {
+          this.errorTip = true;
+          return;
+        }
+        this.$axios.post('/users/login', {userName: this.userName, userPwd: this.userPwd})
+          .then((res) => {
+            console.log(res);
+            if (res.data.status === 0) {
+              this.loginModalFlag = false;
+              this.nickName = res.data.result.userName;
+            } else if (res.data.status === 1) {
+              this.errorTip = true;
+            } else {
+              this.errorTip = true;
+            }
+        });
       }
     }
   };
