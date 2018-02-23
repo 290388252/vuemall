@@ -2,7 +2,7 @@ let express = require('express');
 let router = express.Router();
 let Users = require('../models/user');
 
-/* GET users listing.. */
+/* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });

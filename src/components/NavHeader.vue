@@ -167,6 +167,7 @@
     },
     methods: {
       logOut() {
+        alert('是否要退出？')
         this.$axios.post('/users/logout').then((res) => {
           if (res.data.status === 0) {
             this.nickName = '';

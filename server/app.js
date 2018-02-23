@@ -25,6 +25,22 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use((req, res, next) => {
+  if (req.cookies.userId) {
+    next();
+  } else {
+    console.log(req.originalUrl);
+    if (req.originalUrl === '/users/login' || req.originalUrl === '/users/logout' || req.originalUrl.indexOf('/goods/list') > -1) {
+      next()
+    } else {
+      res.json({
+        status: 1,
+        msg: '用户尚未登录',
+        result: 'null'
+      })
+    }
+  }
+});
 // app.use(function (req, res, next) {
 //   if (req.cookies.userId) {
 //     next();

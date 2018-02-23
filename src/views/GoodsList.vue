@@ -108,7 +108,7 @@
           priceLevel: this.priceChecked
         };
         this.loading = true;
-        this.$axios.get('/goods', {
+        this.$axios.get('/goods/list', {
           params: param
         }).then((res) => {
           // console.log(res);
@@ -162,6 +162,8 @@
           console.log(res.data);
           if (res.data.status === 0) {
             alert('success');
+          } else if (res.data.status === 1) {
+              alert('请登录后再加入购物车');
           }
         });
       }
