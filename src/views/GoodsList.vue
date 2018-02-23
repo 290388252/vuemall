@@ -1,6 +1,6 @@
 <template>
     <div>
-      <nav-header></nav-header>
+      <nav-header :openLogin="openLogin" v-on:headlogout="headlogout" v-on:loginSuccess="loginSuccess"></nav-header>
       <nav-bread>
         <span>Goods</span>
       </nav-bread>
@@ -50,6 +50,23 @@
         </div>
       </div>
       <div class="md-overlay" v-show="overLayFlag" @click.stop="closePop"></div>
+      <Modal v-show="modalShow" v-on:close="closeModal" :modalShow="modalShow" v-on:open="open">
+        <p slot="message">
+          請先登錄在加入購物車
+        </p>
+        <div slot="btnGroup">
+          <a href="javascript:;" class="btn-login" @click="closeModalAndOpenLogin">Go To Login</a>
+        </div>
+      </Modal>
+      <Modal v-show="loginSuccess" :modalShow="loginSuccess">
+        <p slot="message">
+          很高興被您加入購物車
+        </p>
+        <div slot="btnGroup">
+            <a href="javascript:;" class="btn-login-double" @click="closeModal">繼續購物</a>
+            <a href="javascript:;" class="btn-login-double" @click="closeModal">查看我的購物車</a>
+        </div>
+      </Modal>
       <nav-footer></nav-footer>
     </div>
 </template>
@@ -58,6 +75,7 @@
   import NavHeader from './../components/NavHeader';
   import NavFooter from './../components/NavFooter';
   import NavBread from './../components/NavBread';
+  import Modal from './../components/Modal.vue';
   import '../assets/css/product.css';
   export default {
     data() {
@@ -88,13 +106,17 @@
         filterSort: true,
         loading: false,
         page: 1,
-        pageSize: 8
+        pageSize: 8,
+        modalShow: false,
+        openLogin: false,
+        loginSuccess: false
       };
     },
     components: {
       NavHeader,
       NavFooter,
-      NavBread
+      NavBread,
+      Modal
     },
     mounted() {
       this.getGoodsList();
@@ -161,11 +183,25 @@
         this.$axios.post('goods/addCart', {productId: productId}).then((res) => {
           console.log(res.data);
           if (res.data.status === 0) {
-            alert('success');
+            this.loginSuccess = true;
           } else if (res.data.status === 1) {
-              alert('请登录后再加入购物车');
+              this.modalShow = true;
           }
         });
+      },
+      closeModal() {
+        this.modalShow = false;
+        this.loginSuccess = false;
+      },
+      open() {
+          this.openLogin = true;
+      },
+      headlogout() {
+        this.openLogin = false;
+      },
+      closeModalAndOpenLogin() {
+        this.openLogin = true;
+        this.modalShow = false;
       }
     }
   };

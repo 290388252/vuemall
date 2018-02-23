@@ -44,11 +44,11 @@
         </div>
       </div>
     </div>
-    <div class="md-modal modal-msg md-modal-transition" v-bind:class="{'md-show':loginModalFlag}">
+    <div class="md-modal modal-msg md-modal-transition" v-bind:class="{'md-show':loginModalFlag || openLogin}">
       <div class="md-modal-inner">
         <div class="md-top">
           <div class="md-title">Login in</div>
-          <button class="md-close" @click="loginModalFlag=false">Close</button>
+          <button class="md-close" @click="close">Close</button>
         </div>
         <div class="md-content">
           <div class="confirm-tips">
@@ -72,7 +72,7 @@
         </div>
       </div>
     </div>
-    <div class="md-overlay" v-if="loginModalFlag" @click="loginModalFlag=false"></div>
+    <div class="md-overlay" v-if="loginModalFlag || openLogin" @click="loginModalFlag=false"></div>
   </header>
 </template>
 
@@ -156,6 +156,9 @@
 <script type="text/ecmascript-6">
   import '../assets/css/login.css';
   export default {
+    props: [
+        'openLogin'
+    ],
     data() {
       return {
         userName: '',
@@ -165,9 +168,21 @@
         loginModalFlag: false
       };
     },
+    mounted () {
+        this.checkedLogin();
+    },
     methods: {
+      checkedLogin() {
+          this.$axios.get('/users/checkedLogin').then((res) => {
+             if (res.data.status === 0) {
+                 this.nickName = res.data.result;
+             } else {
+               this.nickName = '';
+             }
+          });
+      },
       logOut() {
-        alert('是否要退出？')
+        alert('是否要退出？');
         this.$axios.post('/users/logout').then((res) => {
           if (res.data.status === 0) {
             this.nickName = '';
@@ -187,7 +202,9 @@
           .then((res) => {
             console.log(res);
             if (res.data.status === 0) {
-              this.loginModalFlag = false;
+              this.loginModalFlag=false;
+              this.$emit('headlogout');
+              this.$emit('loginSuccess');
               this.nickName = res.data.result.userName;
             } else if (res.data.status === 1) {
               this.errorTip = true;
@@ -195,6 +212,9 @@
               this.errorTip = true;
             }
         });
+      },
+      close() {
+        this.$emit('headlogout');
       }
     }
   };

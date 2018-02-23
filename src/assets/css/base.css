@@ -625,9 +625,9 @@ a:hover {
 }
 
 .btn:hover, .btn[href]:hover {
-  background-color: #ffe5e6;
-  -webkit-transition: all .3s ease-out;
-  transition: all .3s ease-out;
+  background-color: #ffd0d0;
+  -webkit-transition: all 1s ease-out;
+  transition: all 1s ease-out;
 }
 
 .btn--red, .btn--red[href] {
@@ -1066,7 +1066,7 @@ html {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 535px;
+  width: 505px;
   height: auto;
   -webkit-transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
