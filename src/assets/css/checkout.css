@@ -362,12 +362,13 @@ html {
 
 .cart-item-head li {
   display: table-cell;
-  height: 40px;
-  line-height: 40px;
+  height: 35px;
+  line-height: 35px;
   background: #605F5F;
   color: #fff;
   text-align: center;
   text-transform: uppercase;
+  font-size: 12px;
   font-family: "moderat", sans-serif;
   letter-spacing: .25em;
 }

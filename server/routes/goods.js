@@ -2,6 +2,7 @@ let express = require('express');
 let router = express.Router();
 let mongoose = require('mongoose');
 let Goods = require('../models/goods');
+let Users = require('../models/user');
 
 mongoose.connect('mongodb://127.0.0.1:27017/mall');
 
@@ -64,8 +65,7 @@ router.get('/list', (req, res, next) => {
 router.post('/addCart', (req, res, next) => {
       let userId = '100000077';
       let productId = req.body.productId;
-      let User = require('../models/user');
-      User.findOne({userId: userId}, (err, userDoc) => {
+      Users.findOne({userId: userId}, (err, userDoc) => {
         if (err) {
           res.json({
             status: 1,

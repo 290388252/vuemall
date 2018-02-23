@@ -35,7 +35,7 @@
           <div class="navbar-cart-container">
             <!--<span class="navbar-cart-count" v-text="cartCount" v-if="cartCount"></span>-->
             <span class="navbar-cart-count" v-if="cartCount"></span>
-            <a class="navbar-link navbar-cart-link" href="/#/cart">
+            <a class="navbar-link navbar-cart-link" href="/cart">
               <svg class="navbar-cart-logo">
                 <use class="usea" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
               </svg>
@@ -202,7 +202,7 @@
           .then((res) => {
             console.log(res);
             if (res.data.status === 0) {
-              this.loginModalFlag=false;
+              this.loginModalFlag = false;
               this.$emit('headlogout');
               this.$emit('loginSuccess');
               this.nickName = res.data.result.userName;

@@ -70,13 +70,34 @@ router.get('/checkedLogin', (req, res, next) => {
         status: 0,
         msg: '已登录',
         result: req.cookies.userName || ''
-      })
+      });
     } else {
       res.json({
         status: 1,
         msg: 'null',
         result: '未登录'
-      })
+      });
     }
+});
+
+router.get('/cartList', (req, res, next) => {
+  let userId = req.cookies.userId;
+  Users.findOne({userId: userId}, (err, doc) => {
+    if (err) {
+      res.json({
+        status: 1,
+        msg: 'null',
+        result: 'null'
+      });
+    } else {
+      if (doc) {
+        res.json({
+          status: 0,
+          msg: 'success',
+          result: doc.cartList
+        });
+      }
+    }
+  });
 });
 module.exports = router;
