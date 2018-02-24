@@ -82,9 +82,9 @@
                     <div>
                       <div>
                         <div style="margin-top: 15px">
-                          <a class="input-sub">-</a>
+                          <a class="input-sub" @click="editCart('sub', item)">-</a>
                           <span class="select-ipt">{{item.productNum}}</span>
-                          <a class="input-add">+</a>
+                          <a class="input-add" @click="editCart('add', item)">+</a>
                         </div>
                       </div>
                     </div>
@@ -94,7 +94,7 @@
                   </div>
                   <div class="cart-tab-5">
                     <div class="cart-item-opration">
-                      <a href="javascript:;" class="item-edit-btn">
+                      <a href="javascript:;" class="item-edit-btn" @click="showCartModal(item.productId)">
                         <svg class="icon icon-del">
                           <use xlink:href="#icon-del"></use>
                         </svg>
@@ -129,6 +129,15 @@
           </div>
         </div>
       </div>
+      <Modal v-show="cartModalShow" :modalShow="cartModalShow" v-on:close="closeModal">
+        <p slot="message">
+          确认要删除我吗？
+        </p>
+        <div slot="btnGroup">
+          <a href="javascript:;" class="btn-login-double" @click="deleteCart">确认</a>
+          <a href="javascript:;" class="btn-login-double" @click="closeModal">再想想</a>
+        </div>
+      </Modal>
       <nav-footer></nav-footer>
     </div>
 </template>
@@ -148,6 +157,14 @@
     border-radius: 5px
     margin-bottom: -5px
   }
+  .input-sub:active {
+    background-color: #d1434a;
+    color: #ffffff;
+  }
+  .input-add:active {
+    background-color: #d1434a;
+    color: #ffffff;
+  }
   .select-ipt{
     padding:0 3px;
     width: 30px;
@@ -159,10 +176,14 @@
   import NavHeader from './../components/NavHeader';
   import NavFooter from './../components/NavFooter';
   import NavBread from './../components/NavBread';
+  import Modal from './../components/Modal.vue';
+
   export default {
     data() {
       return {
-        cartList: []
+        cartList: [],
+        cartModalShow: false,
+        productId: ''
       };
     },
     mounted() {
@@ -176,12 +197,46 @@
             console.log(this.cartList);
           }
         });
+      },
+      showCartModal(productId) {
+          this.cartModalShow = true;
+          this.productId = productId;
+      },
+      closeModal() {
+        this.cartModalShow = false;
+      },
+      deleteCart() {
+          console.log(this.productId);
+          this.$axios.post('users/cartDelete',{productId: this.productId})
+            .then((res) => {
+              if (res.data.status === 0) {
+                  this.closeModal();
+                  this.init();
+              }
+            });
+      },
+      editCart(flag, item) {
+          if (flag === 'add') {
+              item.productNum++
+          } else {
+              if (item.productNum <= 1) {
+                  return;
+              }
+              item.productNum--
+          }
+          this.$axios.post('/users/cartUpdate', {productId: item.productId, productNum: item.productNum})
+            .then((res) => {
+              if (res.data.status === 0) {
+                console.log('update success');
+              }
+            });
       }
     },
     components: {
       NavHeader,
       NavFooter,
-      NavBread
+      NavBread,
+      Modal
     }
   };
 </script>
