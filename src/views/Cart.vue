@@ -122,7 +122,7 @@
                   合计: <span class="total-price">{{totalPrice|currency('$')}}</span>
                 </div>
                 <div class="btn-wrap">
-                  <a class="btn btn--red">确认购买</a>
+                  <a class="btn btn--red" v-bind:class="{'btn--dis':checkedCount === 0}">确认购买</a>
                 </div>
               </div>
             </div>
