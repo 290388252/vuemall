@@ -51,18 +51,18 @@
             <div class="cart-item">
               <div class="cart-item-head">
                 <ul>
-                  <li>Items</li>
-                  <li>Price</li>
-                  <li>Quantity</li>
-                  <li>Subtotal</li>
-                  <li>Edit</li>
+                  <li>商品</li>
+                  <li>金额</li>
+                  <li>数量</li>
+                  <li>数量修改</li>
+                  <li>总计</li>
                 </ul>
               </div>
               <ul class="cart-item-list">
                 <li v-for="item in cartList">
                   <div class="cart-tab-1">
                     <div class="cart-item-check">
-                      <a href="javascipt:;" class="checkbox-btn item-check-btn">
+                      <a href="javascipt:;" class="checkbox-btn item-check-btn" v-bind:class="{'checked':item.checked === '1'}" @click="editCart('checked', item)">
                         <svg class="icon icon-ok">
                           <use xlink:href="#icon-ok"></use>
                         </svg>
@@ -76,7 +76,7 @@
                     </div>
                   </div>
                   <div class="cart-tab-2">
-                      <div class="item-price">${{item.salePrice}}</div>
+                      <div class="item-price">{{item.salePrice|currency('$')}}</div>
                   </div>
                   <div class="cart-tab-3">
                     <div>
@@ -90,7 +90,7 @@
                     </div>
                   </div>
                   <div class="cart-tab-4">
-                    <div class="item-price-total">${{item.salePrice * item.productNum}}</div>
+                    <div class="item-price-total">{{(item.salePrice * item.productNum)|currency('$')}}</div>
                   </div>
                   <div class="cart-tab-5">
                     <div class="cart-item-opration">
@@ -109,20 +109,20 @@
             <div class="cart-foot-inner">
               <div class="cart-foot-l">
                 <div class="item-all-check">
-                  <a href="javascipt:;">
-                  <span class="checkbox-btn item-check-btn">
+                  <a href="javascipt:;" @click="toggleCheckAll">
+                  <span class="checkbox-btn item-check-btn" v-bind:class="{'check': checkAllFlag}">
                       <svg class="icon icon-ok"><use xlink:href="#icon-ok"/></svg>
                   </span>
-                    <span>Select all</span>
+                    <span>全选</span>
                   </a>
                 </div>
               </div>
               <div class="cart-foot-r">
                 <div class="item-total">
-                  Item total: <span class="total-price">$9999999</span>
+                  合计: <span class="total-price">{{totalPrice|currency('$')}}</span>
                 </div>
                 <div class="btn-wrap">
-                  <a class="btn btn--red">Checkout</a>
+                  <a class="btn btn--red">确认购买</a>
                 </div>
               </div>
             </div>
@@ -177,6 +177,7 @@
   import NavFooter from './../components/NavFooter';
   import NavBread from './../components/NavBread';
   import Modal from './../components/Modal.vue';
+  import {currency} from '../util/currency';
 
   export default {
     data() {
@@ -188,6 +189,30 @@
     },
     mounted() {
       this.init();
+    },
+    computed: {
+      checkAllFlag() {
+        return this.checkedCount === this.cartList.length;
+      },
+      checkedCount() {
+        let i = 0;
+        this.cartList.forEach((item) => {
+          if (item.checked === '1')i++;
+        });
+        return i;
+      },
+      totalPrice() {
+        let money = 0;
+        this.cartList.forEach((item) => {
+          if (item.checked === '1') {
+            money += item.salePrice * item.productNum;
+          }
+        });
+        return money;
+      }
+    },
+    filters: {
+      currency: currency
     },
     methods: {
       init() {
@@ -207,7 +232,7 @@
       },
       deleteCart() {
           console.log(this.productId);
-          this.$axios.post('users/cartDelete',{productId: this.productId})
+          this.$axios.post('users/cartDelete', {productId: this.productId})
             .then((res) => {
               if (res.data.status === 0) {
                   this.closeModal();
@@ -217,19 +242,30 @@
       },
       editCart(flag, item) {
           if (flag === 'add') {
-              item.productNum++
-          } else {
+              item.productNum++;
+          } else if (flag === 'sub') {
               if (item.productNum <= 1) {
                   return;
               }
-              item.productNum--
+              item.productNum--;
+          } else {
+            item.checked = item.checked === '1' ? '0' : '1';
           }
-          this.$axios.post('/users/cartUpdate', {productId: item.productId, productNum: item.productNum})
+          this.$axios.post('/users/cartUpdate', {productId: item.productId, productNum: item.productNum, checked: item.checked})
             .then((res) => {
               if (res.data.status === 0) {
                 console.log('update success');
               }
             });
+      },
+      toggleCheckAll() {
+        let flag = !this.checkAllFlag;
+        this.cartList.forEach((item) => {
+           item.checked = flag ? '1' : '0';
+        });
+        this.$axios.post('/users/checkedAll', {checked: flag}).then((res) => {
+          console.log(res.data.result);
+        });
       }
     },
     components: {

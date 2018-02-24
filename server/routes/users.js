@@ -80,7 +80,7 @@ router.get('/checkedLogin', (req, res, next) => {
     }
 });
 
-//获取用户购物车列表
+// 获取用户购物车列表
 router.get('/cartList', (req, res, next) => {
   let userId = req.cookies.userId;
   Users.findOne({userId: userId}, (err, doc) => {
@@ -102,16 +102,16 @@ router.get('/cartList', (req, res, next) => {
   });
 });
 
-//删除用户选择的购物车商品
-router.post('/cartDelete',(req, res, next) => {
+// 删除用户选择的购物车商品
+router.post('/cartDelete', (req, res, next) => {
   let userId = req.cookies.userId;
   let productId = req.body.productId;
   Users.update({
     'userId': userId
   },
   {
-    $pull:{'cartList':{'productId': productId}}
-  },(err, doc) => {
+    $pull: {'cartList': {'productId': productId}}
+  }, (err, doc) => {
     if (err) {
       res.json({
         status: 1,
@@ -128,29 +128,64 @@ router.post('/cartDelete',(req, res, next) => {
     });
 });
 
-//更新购物车数据
-router.post('/cartUpdate',(req, res, next) => {
+// 更新购物车数据
+router.post('/cartUpdate', (req, res, next) => {
   let userId = req.cookies.userId;
   let productId = req.body.productId;
   let productNum = req.body.productNum;
-  Users.update({userId:userId,"cartList.productId":productId},{
-    $set: {"cartList.$.productNum":productNum}
-  },(err)=>{//更新子文档
-    if(err){
+  let checked = req.body.checked;
+  Users.update({userId: userId, 'cartList.productId': productId}
+  , {'cartList.$.productNum': productNum, 'cartList.$.checked': checked}
+  , (err) => { // 更新子文档
+    if (err) {
       res.json({
-        status:'1',
-        msg:err.message,
-        result:''
-      })
-    }else{
+        status: '1',
+        msg: err.message,
+        result: ''
+      });
+    } else {
       res.json({
-        status:'0',
-        msg:'更新成功',
-        result:''
+        status: '0',
+        msg: '更新成功',
+        result: ''
       });
     }
   });
-});
+  // 先查找再更新
+// User.findOne({userId:userId},(err,doc)=>{
+//     if(err){
+//         res.json({
+//             status:'1',
+//             msg:err.message,
+//             result:''
+//         })
+//     }else{
+//         doc.cartList.forEach((item)=>{
+//             if(item.productId==pdId){
+//                 item.productNum=num;
+//             }
+//         });
+
+//         User.update({userId:userId},{
+//             $set: {cartList:doc.cartList}
+//         },(err)=>{
+//             if(err){
+//                 res.json({
+//                     status:'1',
+//                     msg:err.message,
+//                     result:''
+//                 })
+//             }else{
+//                 res.json({
+//                     status:'0',
+//                     msg:'',
+//                     result:doc.cartList
+//                 })
+//             }
+//         })
+//     }
+
+// })
 
   // Users.update({
   //     "userId":userId,
@@ -174,4 +209,42 @@ router.post('/cartUpdate',(req, res, next) => {
   //     }
   //   });
 // });
+});
+
+// 购物车数据全选
+router.post('/checkedAll', (req, res, next) => {
+  let userId = req.cookies.userId;
+  let checkedAll = req.body.checked ? '1' : '0';
+  Users.findOne({userId: userId}, (err, doc) => {
+    if (err) {
+      res.json({
+        status: '1',
+        msg: err.message,
+        result: ''
+      });
+    } else {
+      if (doc) {
+        doc.cartList.forEach((item) => {
+          item.checked = checkedAll;
+        });
+        doc.save((err, sucDoc) => {
+          if (err) {
+            res.json({
+              status: '1',
+              msg: err.message,
+              result: ''
+            });
+          } else {
+            res.json({
+              status: '0',
+              msg: 'success',
+              result: 'success'
+            });
+          }
+        });
+      }
+    }
+  });
+});
+
 module.exports = router;
