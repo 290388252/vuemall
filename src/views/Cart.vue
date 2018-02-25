@@ -122,7 +122,7 @@
                   合计: <span class="total-price">{{totalPrice|currency('$')}}</span>
                 </div>
                 <div class="btn-wrap">
-                  <a class="btn btn--red" v-bind:class="{'btn--dis':checkedCount === 0}">确认购买</a>
+                  <a class="btn btn--red" v-bind:class="{'btn--dis':checkedCount === 0}" @click="checkOut">确认购买</a>
                 </div>
               </div>
             </div>
@@ -266,6 +266,13 @@
         this.$axios.post('/users/checkedAll', {checked: flag}).then((res) => {
           console.log(res.data.result);
         });
+      },
+      checkOut() {
+        if (this.checkedCount > 0) {
+          this.$router.push({
+            path: '/address'
+          });
+        }
       }
     },
     components: {
