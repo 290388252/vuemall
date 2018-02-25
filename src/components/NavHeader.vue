@@ -25,13 +25,13 @@
         <a href="/">
           <img class="navbar-brand-logo" src="../assets/logo.png">
         </a>
-        <span style="font-weight: 900; color: #d1434a">My Shop</span>
+        <span style="font-weight: 900; color: #d1434a">超超商城</span>
       </div>
       <div class="navbar-right-container" style="display: flex;">
         <div class="navbar-menu-container">
           <span class="navbar-link" v-text="nickName" v-if="nickName"></span>
-          <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=true" v-if="!nickName">Login</a>
-          <a href="javascript:void(0)" class="navbar-link" @click="logOut" v-else>Logout</a>
+          <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=true" v-if="!nickName">登录</a>
+          <a href="javascript:void(0)" class="navbar-link" @click="logOut" v-else>退出</a>
           <div class="navbar-cart-container">
             <!--<span class="navbar-cart-count" v-text="cartCount" v-if="cartCount"></span>-->
             <span class="navbar-cart-count" v-if="cartCount"></span>
@@ -47,8 +47,8 @@
     <div class="md-modal modal-msg md-modal-transition" v-bind:class="{'md-show':loginModalFlag || openLogin}">
       <div class="md-modal-inner">
         <div class="md-top">
-          <div class="md-title">Login in</div>
-          <button class="md-close" @click="close">Close</button>
+          <div class="md-title">登录</div>
+          <button class="md-close" @click="loginModalFlag=false">Close</button>
         </div>
         <div class="md-content">
           <div class="confirm-tips">
@@ -212,9 +212,6 @@
               this.errorTip = true;
             }
         });
-      },
-      close() {
-        this.$emit('headlogout');
       }
     }
   };

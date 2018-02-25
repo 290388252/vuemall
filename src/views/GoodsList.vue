@@ -1,22 +1,22 @@
 <template>
     <div>
-      <nav-header :openLogin="openLogin" v-on:headlogout="headlogout" v-on:loginSuccess="loginSuccess"></nav-header>
+      <nav-header :openLogin="openLogin" v-on:loginSuccess="loginSuccess"></nav-header>
       <nav-bread>
-        <span>Goods</span>
+        <span>商品</span>
       </nav-bread>
       <div class="accessory-result-page accessory-page">
         <div class="container">
           <div class="filter-nav">
-            <span class="sortby">Sort by:</span>
-            <a href="javascript:void(0)" class="default cur">Default</a>
-            <a href="javascript:void(0)" class="price" v-bind:class="{'sort-up':!filterSort}" @click="sortGoods">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
+            <span class="sortby">排序:</span>
+            <a href="javascript:void(0)" class="default cur">默认</a>
+            <a href="javascript:void(0)" class="price" v-bind:class="{'sort-up':!filterSort}" @click="sortGoods">价格 <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
             <a href="javascript:void(0)" class="filterby stopPop" @click.stop="showFilterPop">Filter by</a>
           </div>
           <div class="accessory-result">
             <div class="filter stopPop" id="filter" v-bind:class="{'filterby-show':filterBy}">
               <dl class="filter-price">
-                <dt>Price:</dt>
-                <dd><a href="javascript:void(0)" @click="setPriceFilter('all')" v-bind:class="{'cur':priceChecked === 'all'}">All</a></dd>
+                <dt>金额:</dt>
+                <dd><a href="javascript:void(0)" @click="setPriceFilter('all')" v-bind:class="{'cur':priceChecked === 'all'}">全部</a></dd>
                 <dd v-for="(item,index) in priceFilter">
                   <a href="javascript:void(0)" @click="setPriceFilter(index)" v-bind:class="{'cur':priceChecked === index}">{{item.startPrice}} - {{item.endPrice}}</a>
                 </dd>
@@ -55,7 +55,7 @@
           請先登錄在加入購物車
         </p>
         <div slot="btnGroup">
-          <a href="javascript:;" class="btn-login" @click="closeModalAndOpenLogin">Go To Login</a>
+          <a href="javascript:;" class="btn-login" @click="closeModalAndOpenLogin">立刻去登录</a>
         </div>
       </Modal>
       <Modal v-show="loginSuccess" :modalShow="loginSuccess" v-on:close="closeModal">
@@ -198,9 +198,6 @@
       },
       open() {
           this.openLogin = true;
-      },
-      headlogout() {
-        this.openLogin = false;
       },
       closeModalAndOpenLogin() {
         this.openLogin = true;

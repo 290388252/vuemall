@@ -3,7 +3,7 @@
         <div class="bread-wrap">
             <nav class="">
                 <a href="/">
-                    Home
+                    主页
                 </a>
                 <slot></slot>
             </nav>

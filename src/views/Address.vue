@@ -41,14 +41,14 @@
         <div class="container">
           <div class="checkout-addr">
             <div class="page-title-normal">
-              <h2 class="page-title-h2"><span>check out</span></h2>
+              <h2 class="page-title-h2"><span>请确认</span></h2>
             </div>
             <div class="check-step">
               <ul>
-                <li class="cur"><span>Confirm</span> address</li>
-                <li><span>View your</span> order</li>
-                <li><span>Make</span> payment</li>
-                <li><span>Order</span> confirmation</li>
+                <li class="cur"><span>确认</span>地址</li>
+                <li><span>查看你的</span>订单</li>
+                <li><span>确认</span>支付</li>
+                <li><span>订单</span>完成</li>
               </ul>
             </div>
             <div class="page-title-normal checkout-title">
@@ -80,7 +80,7 @@
                       <i class="icon-add">
                         <svg class="icon icon-add"><use xlink:href="#icon-add"></use></svg>
                       </i>
-                      <p>Add new address</p>
+                      <p>添加地址</p>
                     </div>
                   </li>
                 </ul>
@@ -113,7 +113,8 @@
               </div>
             </div>
             <div class="next-btn-wrap">
-              <router-link href="javascipt:;" class="btn btn--m btn--red" v-bind:to="{path : '/orderConfirm', query: {'addressId': selectAddressId}}">Next</router-link>
+              <button v-show="selectAddressId === ''" class="btn btn--m btn--dis btn--red">Next</button>
+              <router-link v-show="selectAddressId" href="javascipt:;" class="btn btn--m btn--red" v-bind:to="{path : '/orderConfirm', query: {'addressId': selectAddressId}}">Next</router-link>
             </div>
           </div>
         </div>

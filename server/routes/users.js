@@ -1,6 +1,7 @@
 let express = require('express');
 let router = express.Router();
 let Users = require('../models/user');
+require('./../util/util');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -347,4 +348,113 @@ router.post('/deleteUserAddress', (req, res, next) => {
   }
 });
 
+// 支付接口
+router.post('/payment', (req, res, next) => {
+  let userId = req.cookies.userId;
+  let addressId = req.body.addressId;
+  let orderTotal = req.body.orderTotal;
+  let addressInfo = [];
+  let goodsList = [];
+  Users.findOne({userId: userId}, (err, doc) => {
+    if (err) {
+      res.json({
+        status: 1,
+        msg: err.message,
+        result: 'null'
+      });
+    } else {
+      if (doc) {
+        doc.addressList.forEach((item) => {
+          if (item.addressId === addressId) {
+            addressInfo = item;
+          }
+        });
+        doc.cartList.forEach((item) => {
+          if (item.checked === '1') {
+            goodsList = item;
+          }
+        });
+        let platform = '622';
+        let r1 = Math.floor(Math.random() * 10);
+        let r2 = Math.floor(Math.random() * 10);
+        let sysDate = new Date().Format('yyyyMMddhhmmss');
+        let createDate = new Date().Format('yyyy-MM-dd hh:mm:ss');
+        let orderId = platform + r1 + sysDate + r2;
+        let order = {
+          orderId: orderId,
+          orderTotal: orderTotal,
+          addressInfo: addressInfo,
+          goodsList: goodsList,
+          orderStatus: 1,
+          createDate: createDate
+        };
+        doc.orderList.push(order);
+        doc.save((err, doc) => {
+          if (err) {
+            res.json({
+              status: 1,
+              msg: err.message,
+              result: 'null'
+            });
+          } else {
+            res.json({
+              status: 0,
+              msg: 'success',
+              result: {
+                orderId: order.orderId,
+                orderTotal: order.orderTotal
+              }
+            });
+          }
+        });
+      }
+    }
+  });
+});
+
+// 获取订单信息
+router.get('/orderDetail', (req, res, next) => {
+  let userId = req.cookies.userId;
+  let orderId = req.param('orderId');
+  let orderTotal = 0;
+  Users.findOne({userId: userId}, (err, doc) => {
+    if (err) {
+      res.json({
+        status: 1,
+        msg: err.message,
+        result: 'null'
+      });
+    } else {
+      if (doc.orderList.length > 0) {
+        doc.orderList.forEach((item) => {
+          if (item.orderId === orderId) {
+            orderTotal = item.orderTotal;
+          }
+        });
+        if (orderTotal > 0) {
+          res.json({
+            status: 0,
+            msg: 'success',
+            result: {
+              orderId: orderId,
+              orderTotal: orderTotal
+            }
+          });
+        } else {
+          res.json({
+            status: 1,
+            msg: 'error',
+            result: '无此订单'
+          });
+        }
+      } else {
+        res.json({
+          status: 1,
+          msg: 'error',
+          result: '当前用户未创建订单'
+        });
+      }
+    }
+  });
+});
 module.exports = router;

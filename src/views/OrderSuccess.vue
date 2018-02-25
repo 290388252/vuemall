@@ -2,7 +2,7 @@
     <div>
       <nav-header></nav-header>
       <nav-bread>
-        <span>订单确认</span>
+        <span>订单支付</span>
       </nav-bread>
       <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <defs>
@@ -30,93 +30,33 @@
       </svg>
       <div class="container">
         <div class="checkout-order">
+          <div class="page-title-normal">
+            <h2 class="page-title-h2"><span>支付成功</span></h2>
+          </div>
           <div class="check-step">
             <ul>
               <li class="cur"><span>确认</span>地址</li>
               <li class="cur"><span>查看你的</span>订单</li>
               <li class="cur"><span>确认</span>支付</li>
-              <li><span>订单</span>完成</li>
+              <li class="cur"><span>订单</span>完成</li>
             </ul>
           </div>
-
-          <div class="page-title-normal checkout-title">
-            <h2><span>Order content</span></h2>
-          </div>
-          <div class="item-list-wrap confirm-item-list-wrap">
-            <div class="cart-item order-item">
-              <div class="cart-item-head">
-                <ul>
-                  <li>商品</li>
-                  <li>金额</li>
-                  <li>数量</li>
-                  <li>总计</li>
-                </ul>
+        </div>
+        <div class="order-create">
+          <div class="order-create-pic"><img src="/static/ok-2.png" alt=""></div>
+          <div class="order-create-main">
+            <h3>恭喜您! <br>您的订单已经下单成功!</h3>
+            <p>
+              <span>订单 ID：{{orderId}}</span>
+              <span>订单 总价：{{orderTotal|currency('$')}}</span>
+            </p>
+            <div class="order-create-btn-wrap">
+              <div class="btn-l-wrap">
+                <router-link class="btn btn--m" to="/cart">我的购物车</router-link>
               </div>
-              <ul class="cart-item-list">
-                <li v-for="item in cartList" v-show="item.checked === '1'">
-                  <div class="cart-tab-1">
-                    <div class="cart-item-pic">
-                      <img v-lazy="'../../static/'+item.productImage" :alt="item.productName">
-                    </div>
-                    <div class="cart-item-title">
-                      <div class="item-name">{{item.productName}}</div>
-
-                    </div>
-                  </div>
-                  <div class="cart-tab-2">
-                    <div class="item-price">{{item.salePrice}}</div>
-                  </div>
-                  <div class="cart-tab-3">
-                    <div style="margin-top: 15px">
-                      <!--<div class="select-self">-->
-                        <!--<div class="select-self-area">-->
-                          <span class="select-ipt">{{item.productNum}}</span>
-                        <!--</div>-->
-                      <!--</div>-->
-                      <!--<div class="item-stock item-stock-no">In Stock</div>-->
-                    </div>
-                  </div>
-                  <div class="cart-tab-4">
-                    <div class="item-price-total">{{(item.salePrice*item.productNum)|currency('$')}}</div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="price-count-wrap">
-            <div class="price-count">
-              <ul>
-                <li>
-                  <span>价钱:</span>
-                  <span>{{subTotal|currency('$')}}</span>
-                </li>
-                <li>
-                  <span>打税:</span>
-                  <span>{{shopping|currency('$')}}</span>
-                </li>
-                <li>
-                  <span>优惠:</span>
-                  <span>{{discount|currency('$')}}</span>
-                </li>
-                <li>
-                  <span>运费:</span>
-                  <span>{{tax|currency('$')}}</span>
-                </li>
-                <li class="order-total-price">
-                  <span>合计:</span>
-                  <span>{{orderTotal|currency('$')}}</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="order-foot-wrap">
-            <div class="prev-btn-wrap">
-              <router-link class="btn btn--m" to="/address">返回</router-link>
-            </div>
-            <div class="next-btn-wrap">
-              <button class="btn btn--m btn--red" @click="payment">立刻支付</button>
+              <div class="btn-r-wrap">
+                <router-link class="btn btn--m" to="/">商品主页</router-link>
+              </div>
             </div>
           </div>
         </div>
@@ -137,43 +77,28 @@
   export default {
     data() {
       return {
-        cartList: [],
-        subTotal: 0,
-        shopping: 100,
-        discount: 200,
-        tax: 20,
-        orderTotal: 0
+        orderId: '',
+        orderTotal: ''
       };
     },
     mounted() {
-      this.getCartList();
+      let orderId = this.$route.query.orderId;
+      if (!orderId) {
+        return;
+      }
+      this.$axios.get('/users/orderDetail', {
+        params: {
+          orderId: orderId
+        }
+      }).then((res) => {
+        if (res.data.status === 0) {
+          this.orderId = orderId;
+          this.orderTotal = res.data.result.orderTotal;
+        }
+      });
     },
     filters: {
       currency: currency
-    },
-    methods: {
-      getCartList() {
-        this.$axios.get('/users/cartList').then((res) => {
-          if (res.data.status === 0) {
-            this.cartList = res.data.result;
-            this.cartList.forEach((item) => {
-              if (item.checked === '1') {
-                this.subTotal += item.salePrice * item.productNum;
-              }
-              this.orderTotal = this.subTotal + this.shopping - this.discount + this.tax;
-            });
-          }
-        });
-      },
-      payment() {
-        let addressId = this.$route.query.addressId;
-        this.$axios.post('/users/payment', {addressId: addressId, orderTotal: this.orderTotal})
-          .then((res) => {
-            if (res.data.status === 0) {
-              this.$router.push({path: '/orderSuccess?orderId=' + res.data.result.orderId});
-            }
-          });
-      }
     },
     components: {
       NavHeader,

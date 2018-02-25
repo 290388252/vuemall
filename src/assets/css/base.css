@@ -645,11 +645,6 @@ a:hover {
 .btn--m {
   height: 40px;
   line-height: 40px;
-}
-
-.btn--m--order {
-  height: 40px;
-  line-height: 40px;
   border-radius: 5px;
 }
 
