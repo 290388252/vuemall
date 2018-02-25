@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import GoodsList from '@/views/GoodsList.vue';
 import Cart from '@/views/Cart.vue';
+import Address from '@/views/Address';
 
 Vue.use(Router);
 
@@ -17,6 +18,11 @@ export default new Router({
       path: '/cart',
       name: 'cart',
       component: Cart
+    },
+    {
+      path: '/address',
+      name: 'address',
+      component: Address
     }
   ]
 });

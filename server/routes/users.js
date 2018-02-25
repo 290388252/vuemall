@@ -139,13 +139,13 @@ router.post('/cartUpdate', (req, res, next) => {
   , (err) => { // 更新子文档
     if (err) {
       res.json({
-        status: '1',
+        status: 1,
         msg: err.message,
         result: ''
       });
     } else {
       res.json({
-        status: '0',
+        status: 0,
         msg: '更新成功',
         result: ''
       });
@@ -218,7 +218,7 @@ router.post('/checkedAll', (req, res, next) => {
   Users.findOne({userId: userId}, (err, doc) => {
     if (err) {
       res.json({
-        status: '1',
+        status: 1,
         msg: err.message,
         result: ''
       });
@@ -230,13 +230,13 @@ router.post('/checkedAll', (req, res, next) => {
         doc.save((err, sucDoc) => {
           if (err) {
             res.json({
-              status: '1',
+              status: 1,
               msg: err.message,
               result: ''
             });
           } else {
             res.json({
-              status: '0',
+              status: 0,
               msg: 'success',
               result: 'success'
             });
@@ -245,6 +245,106 @@ router.post('/checkedAll', (req, res, next) => {
       }
     }
   });
+});
+
+// 获取用户地址
+router.get('/getUserAddress', (req, res, next) => {
+  let userId = req.cookies.userId;
+  Users.findOne({userId: userId}, (err, doc) => {
+    if (err) {
+      res.json({
+        status: 1,
+        msg: err.message,
+        result: ''
+      });
+    } else {
+      res.json({
+        status: 0,
+        msg: 'success',
+        result: {
+          count: doc.addressList.length,
+          list: doc.addressList
+        }
+      });
+    }
+  });
+});
+
+// 更改用户默认地址
+router.post('/editUserAddress', (req, res, next) => {
+  let userId = req.cookies.userId;
+  let addressId = req.body.addressId;
+  if (!addressId) {
+    res.json({
+      status: 1,
+      msg: '请传addressId',
+      result: '未获取到地址id'
+    });
+  } else {
+    Users.findOne({userId: userId}, (err, doc) => {
+      if (err) {
+        res.json({
+          status: 1,
+          msg: err.message,
+          result: 'null'
+        });
+      } else {
+        doc.addressList.forEach((item) => {
+          if (item.addressId === addressId) {
+            item.isDefault = true;
+          } else {
+            item.isDefault = false;
+          }
+        });
+
+        doc.save((err, doc) => {
+          if (err) {
+            res.json({
+              status: 1,
+              msg: err.message,
+              result: 'null'
+            });
+          } else {
+              res.json({
+                status: 0,
+                msg: 'success',
+                result: 'success'
+              });
+          }
+        });
+      }
+    });
+  }
+});
+
+// 删除用户所选地址
+router.post('/deleteUserAddress', (req, res, next) => {
+  let userId = req.cookies.userId;
+  let addressId = req.body.addressId;
+  if (!addressId) {
+    res.json({
+      status: 1,
+      msg: '请传addressId',
+      result: '未获取到地址id'
+    });
+  } else {
+    Users.update({'userId': userId}, {$pull: {'addressList': {'addressId': addressId}}}
+    , (err, doc) => {
+        if (err) {
+          res.json({
+            status: 1,
+            msg: err.message,
+            result: 'null'
+          });
+        } else {
+          res.json({
+            status: 0,
+            msg: 'success',
+            result: 'success'
+          });
+        }
+      });
+  }
 });
 
 module.exports = router;
