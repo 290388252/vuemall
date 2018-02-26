@@ -12,7 +12,7 @@ router.get('/testApi', (req, res, next) => {
   res.send('test Api good');
 });
 
-// 用户登录
+// 用户登录接口
 router.post('/login', (req, res, next) => {
   Users.findOne({userName: req.body.userName, userPwd: req.body.userPwd}, (err, doc) => {
     if (err) {
@@ -51,7 +51,7 @@ router.post('/login', (req, res, next) => {
   });
 });
 
-// 用户退出
+// 用户退出接口
 router.post('/logout', (req, res, next) => {
   res.cookie('userId', '', {
     path: '/',
@@ -64,7 +64,7 @@ router.post('/logout', (req, res, next) => {
   });
 });
 
-// 登录校验
+// 登录校验接口
 router.get('/checkedLogin', (req, res, next) => {
     if (req.cookies.userId) {
       res.json({
@@ -81,7 +81,33 @@ router.get('/checkedLogin', (req, res, next) => {
     }
 });
 
-// 获取用户购物车列表
+// 获取购物车数量接口
+router.get('/getCartListCount', (req, res, next) => {
+  let userId = req.cookies.userId;
+  Users.findOne({userId: userId}, (err, doc) => {
+    if (err) {
+      res.json({
+        status: 1,
+        msg: 'null',
+        result: 'null'
+      });
+    } else {
+      if (doc) {
+        let cartCount = 0;
+        doc.cartList.map((item) => {
+          cartCount += parseFloat(item.productNum);
+        });
+        res.json({
+          status: 0,
+          msg: 'success',
+          result: cartCount
+        });
+      }
+    }
+  });
+});
+
+// 获取用户购物车列表接口
 router.get('/cartList', (req, res, next) => {
   let userId = req.cookies.userId;
   Users.findOne({userId: userId}, (err, doc) => {
@@ -103,7 +129,7 @@ router.get('/cartList', (req, res, next) => {
   });
 });
 
-// 删除用户选择的购物车商品
+// 删除用户选择的购物车商品接口
 router.post('/cartDelete', (req, res, next) => {
   let userId = req.cookies.userId;
   let productId = req.body.productId;
@@ -129,7 +155,7 @@ router.post('/cartDelete', (req, res, next) => {
     });
 });
 
-// 更新购物车数据
+// 更新购物车数据接口
 router.post('/cartUpdate', (req, res, next) => {
   let userId = req.cookies.userId;
   let productId = req.body.productId;
@@ -212,7 +238,7 @@ router.post('/cartUpdate', (req, res, next) => {
 // });
 });
 
-// 购物车数据全选
+// 购物车数据全选接口
 router.post('/checkedAll', (req, res, next) => {
   let userId = req.cookies.userId;
   let checkedAll = req.body.checked ? '1' : '0';
@@ -248,7 +274,7 @@ router.post('/checkedAll', (req, res, next) => {
   });
 });
 
-// 获取用户地址
+// 获取用户地址接口
 router.get('/getUserAddress', (req, res, next) => {
   let userId = req.cookies.userId;
   Users.findOne({userId: userId}, (err, doc) => {
@@ -271,7 +297,7 @@ router.get('/getUserAddress', (req, res, next) => {
   });
 });
 
-// 更改用户默认地址
+// 更改用户默认地址接口
 router.post('/editUserAddress', (req, res, next) => {
   let userId = req.cookies.userId;
   let addressId = req.body.addressId;
@@ -318,7 +344,7 @@ router.post('/editUserAddress', (req, res, next) => {
   }
 });
 
-// 删除用户所选地址
+// 删除用户所选地址接口
 router.post('/deleteUserAddress', (req, res, next) => {
   let userId = req.cookies.userId;
   let addressId = req.body.addressId;
@@ -348,7 +374,7 @@ router.post('/deleteUserAddress', (req, res, next) => {
   }
 });
 
-// 支付接口
+// 支付接口接口
 router.post('/payment', (req, res, next) => {
   let userId = req.cookies.userId;
   let addressId = req.body.addressId;
@@ -412,7 +438,7 @@ router.post('/payment', (req, res, next) => {
   });
 });
 
-// 获取订单信息
+// 获取订单信息接口
 router.get('/orderDetail', (req, res, next) => {
   let userId = req.cookies.userId;
   let orderId = req.param('orderId');

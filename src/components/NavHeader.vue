@@ -33,8 +33,7 @@
           <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=true" v-if="!nickName">登录</a>
           <a href="javascript:void(0)" class="navbar-link" @click="logOut" v-else>退出</a>
           <div class="navbar-cart-container">
-            <!--<span class="navbar-cart-count" v-text="cartCount" v-if="cartCount"></span>-->
-            <span class="navbar-cart-count" v-if="cartCount"></span>
+            <span class="navbar-cart-count" v-text="cartCounts" v-if="cartCounts"></span>
             <a class="navbar-link navbar-cart-link" href="/cart">
               <svg class="navbar-cart-logo">
                 <use class="usea" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
@@ -155,6 +154,7 @@
 
 <script type="text/ecmascript-6">
   import '../assets/css/login.css';
+  import { mapState } from 'vuex';
   export default {
     props: [
         'openLogin'
@@ -164,9 +164,17 @@
         userName: '',
         userPwd: '',
         errorTip: false,
-        nickName: '',
         loginModalFlag: false
       };
+    },
+    computed: {
+      ...mapState(['nickName', 'cartCounts'])
+//      nickName() {
+//        return this.$store.state.nickName;
+//      },
+//      cartCount() {
+//        return this.$store.state.cartCount;
+//      }
     },
     mounted () {
         this.checkedLogin();
@@ -175,9 +183,14 @@
       checkedLogin() {
           this.$axios.get('/users/checkedLogin').then((res) => {
              if (res.data.status === 0) {
-                 this.nickName = res.data.result;
+                 this.$store.commit('updateUserInfo', res.data.result);
+                 this.getCartListCount();
              } else {
-               this.nickName = '';
+               this.$store.state.cartCount = 0;
+               this.$store.commit('getUserCartListCount', 0);
+               if (this.$route.path !== '/') {
+                  this.$router.push('/');
+               }
              }
           });
       },
@@ -185,7 +198,8 @@
         alert('是否要退出？');
         this.$axios.post('/users/logout').then((res) => {
           if (res.data.status === 0) {
-            this.nickName = '';
+            this.$store.commit('updateUserInfo', '');
+            this.$store.commit('getUserCartListCount', 0);
             console.log('logout success');
           }
         });
@@ -205,12 +219,20 @@
               this.loginModalFlag = false;
               this.$emit('headlogout');
               this.$emit('loginSuccess');
-              this.nickName = res.data.result.userName;
+              this.getCartListCount();
+              this.$store.commit('updateUserInfo', res.data.result.userName);
             } else if (res.data.status === 1) {
               this.errorTip = true;
             } else {
               this.errorTip = true;
             }
+        });
+      },
+      getCartListCount() {
+        this.$axios.get('/users/getCartListCount').then((res) => {
+          if (res.data.status === 0) {
+              this.$store.commit('getUserCartListCount', res.data.result);
+          }
         });
       }
     }
