@@ -11,7 +11,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "axios": "^0.17.1",
+    "axios": "^0.21.1",
     "jade": "^1.11.0",
     "mongoose": "^5.0.6",
     "style-loader": "^0.20.2",
