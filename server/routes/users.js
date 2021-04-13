@@ -13,6 +13,7 @@ router.get('/testApi', (req, res, next) => {
 });
 
 // 用户登录接口
+//yanchao create 2019
 router.post('/login', (req, res, next) => {
   Users.findOne({userName: req.body.userName, userPwd: req.body.userPwd}, (err, doc) => {
     if (err) {
